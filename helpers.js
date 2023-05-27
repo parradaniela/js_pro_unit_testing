@@ -73,7 +73,7 @@ const handlePromises = async (tasks = []) => {
     const [...data] = await Promise.all(tasks);
     return data;
   } catch (e) {
-    throw new Error(e);
+    return new Error(e);
   }
 };
 

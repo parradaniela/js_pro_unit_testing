@@ -10,18 +10,16 @@ const axios = require('axios');
 jest.mock('axios');
 
 describe('flattenArr', () => {
-  it('return a non-nested arr', () => {
-    const input = [1, 2, 3, 4];
-    const expectedOutput = [1, 2, 3, 4];
-
+  it('flattens a nested array', () => {
+    const input = [1, 2, 3, [4, 5, [6, 7, [8, 9, 10]]]];
+    const expectedOutput = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     expect(flattenArr(input)).toEqual(expectedOutput);
+    expect(flattenArr(input)).toHaveLength(10);
   });
 
-  it('flattens a nested arr', () => {
-    const input = [1, 2, 3, [4, 5, [6, 7, [8, [9, [10]]]]]];
-    const expectedOutput = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-    expect(flattenArr(input)).toEqual(expectedOutput);
+  it('returns a non-nested array', () => {
+    const input = [1, 2, 3, 4, 5];
+    expect(flattenArr(input)).toEqual([1, 2, 3, 4, 5]);
   });
 });
 
@@ -66,19 +64,46 @@ describe('sortList', () => {
   });
 });
 
-/**
- * Add you test/s here and get this helper file to 100% test coverage!!!
- * You can check that your coverage meets 100% by running `npm run test:coverage`
- */
+// /**
+//  * Add you test/s here and get this helper file to 100% test coverage!!!
+//  * You can check that your coverage meets 100% by running `npm run test:coverage`
+//  */
 
 describe('formatCurrency', () => {
-  it('does <insert your test here>', () => {
-    return true;
+  it('returns $0.00 if input was not a number', () => {
+    const input = 'abc';
+    expect(formatCurrency(input)).toEqual('$0.00');
+  });
+
+  it('returns a number input formatted to US dollars', () => {
+    const input = 23;
+    expect(formatCurrency(input)).toEqual('$23.00');
   });
 });
 
 describe('handlePromises', () => {
-  it('does <insert your test here>', () => {
-    return true;
+  it('resolves all promises', async () => {
+    const promise1 = new Promise((res, rej) => {
+      return res('Hello');
+    });
+
+    const promise2 = new Promise((res, rej) => {
+      return res('World');
+    });
+    const data = await handlePromises([promise1, promise2]);
+    expect(data).toEqual(['Hello', 'World']);
+  });
+
+  it('handles rejected promises', async () => {
+    const promise1 = new Promise((res, rej) => {
+      return rej('Error');
+    });
+
+    const promise2 = new Promise((res, rej) => {
+      return res('World');
+    });
+
+    const data = await handlePromises([promise1, promise2]);
+    expect(data).toEqual(new Error('Error'));
   });
 });
